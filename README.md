@@ -68,12 +68,45 @@ orange/*.ows  (clasificación: Logistic Regression, Random Forest, SVM
 
 Los dipéptidos **no** mejoran el desempeño respecto a la composición simple — y no es un
 error del práctico, es el resultado más interesante de toda la actividad. Con ~250 proteínas
-y ~410 features, cualquier modelo tiende a sobreajustar (*curse of dimensionality*). Pero hay
-algo más profundo: ni reducir la dimensionalidad, ni agrupar aminoácidos en un alfabeto
-reducido, ni agregar composición del extremo N-terminal lograron superar a la composición
-simple. Ninguna representación de tipo "bolsa de fragmentos" —por más grande o chica que
-sea— codifica **posición**, y eso es justamente lo que distingue a una señal de localización
-nuclear real. El detalle completo de este análisis está en `docs/guia_docentes.docx`.
+y ~410 features, cualquier modelo tiende a sobreajustar (*curse of dimensionality*). El
+detalle completo de este análisis está en `docs/guia_docentes.docx`.
+
+### Qué probamos para romper ese techo, y no funcionó
+
+Antes de aceptar el resultado como definitivo, probamos 4 formas distintas de recuperar
+información posicional sin salir de Orange / sin entrenar una red neuronal desde cero.
+Ninguna superó a la composición simple:
+
+| # | Intento | Idea | Resultado |
+|---|---|---|---|
+| 1 | Selección de features (Rank) | Quedarse con los ~30-50 dipéptidos más informativos, para reducir sobreajuste | Sin mejora |
+| 2 | Alfabeto reducido | Agrupar los 20 aminoácidos en 6 categorías fisicoquímicas y contar pares de grupos (36 features en vez de 400) | Sin mejora |
+| 3 | Composición N-terminal | Agregar la composición calculada solo sobre los primeros 30 residuos, donde suelen concentrarse señales de localización | Sin mejora |
+| 4 | Ventana deslizante de residuos básicos | Buscar, en cualquier posición de la secuencia, el tramo de 7 o 12 residuos con mayor proporción de K/R (aproximando una NLS) | Sin mejora significativa |
+
+Los primeros dos intentos apuntaban a resolver *sobreajuste* (demasiadas features para pocas
+muestras); los últimos dos apuntaban a resolver la falta de *información posicional*. Que
+ninguno de los cuatro caminos funcione es una evidencia razonablemente sólida de que el techo
+real combina dos cosas: (a) **el dataset es chico** (250 proteínas) para que cualquier señal
+posicional, manual o aprendida, se muestre con solidez estadística, y (b) **ninguna
+representación de tipo "bolsa de fragmentos"** —por más grande, chica o reagrupada que
+sea— codifica *posición* de forma explícita, que es justamente lo que distingue a una señal
+de localización nuclear real.
+
+### Próximos pasos (no implementado en este repo)
+
+- [ ] **Embeddings de un modelo de lenguaje de proteínas (ESM-2) en vez de bag-of-aminoácidos.**
+  Es la opción de mejor costo/beneficio para superar el techo actual sin reentrenar un modelo
+  de lenguaje propio: hay versiones chicas de ESM-2 (pocos millones de parámetros) que corren
+  sin GPU. La idea es sacar el embedding de cada proteína del dataset y entrenar
+  un clasificador simple (Logistic Regression o una MLP chica) sobre esos embeddings, en vez
+  de sobre composición de aminoácidos. El embedding ya trae información posicional y
+  evolutiva aprendida de haber visto millones de secuencias, sin que haya que diseñarla a
+  mano — muy probablemente superaría a todo lo probado en este repo.
+- [ ] One-hot encoding + CNN sobre la secuencia completa (con un dataset más grande, dado que
+  con 250 proteínas es poco probable que rinda mejor que los intentos ya descartados).
+- [ ] Agregar una cuarta clase (`Mitochondria`, keyword `KW-0496`) para acercarse más al
+  problema real de clasificación multi-clase.
 
 ## Estructura del repositorio
 
@@ -86,8 +119,9 @@ where-is-my-protein/
 │   ├── exploracion_alumnos.ipynb            # con prompts sugeridos para IA, sin resolver
 │   └── exploracion_docentes_completa.ipynb  # resuelto, con gráficos de referencia
 ├── orange/
-│   ├── bag_of_aminoacidos.ows    # File → LR/RF/SVM → Test and Score → Confusion Matrix
-│   └── dipeptidos.ows            # mismo esqueleto, para la representación de dipéptidos
+│   ├── bag_of_aminoacidos.ows              # File → LR/RF/SVM → Test and Score → Confusion Matrix
+│   ├── dipeptidos.ows                      # mismo esqueleto, para la representación de dipéptidos
+│   
 ├── docs/
 │   ├── guia_alumnos.docx         # agenda, instrucciones paso a paso, preguntas de informe
 │   └── guia_docentes.docx        # + setup técnico, resultados esperados, troubleshooting
@@ -118,9 +152,8 @@ Mining · UniProt REST API
 Este práctico fue diseñado para introducir Machine Learning a estudiantes de Bioinformática
 a partir de un problema biológico real, integrando manejo de datos públicos, ingeniería de
 representaciones, y uso crítico de asistentes de IA como herramienta de trabajo (documentado
-explícitamente, no evitado). El diseño pasó por varias iteraciones — incluyendo intentos que
-no funcionaron (selección de features, alfabeto reducido, composición N-terminal) y que
-terminaron siendo, en sí mismos, parte de la lección.
+explícitamente, no evitado). El diseño pasó por varias iteraciones — incluyendo los 4 intentos
+fallidos documentados arriba — que terminaron siendo, en sí mismos, parte de la lección.
 
 ## Licencia
 
