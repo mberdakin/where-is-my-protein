@@ -1,0 +1,14 @@
+# Datos generados por el script (regenerables, no se versionan)
+data/*.csv
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Orange
+*.ows.bak
+
+# SO
+.DS_Store
+Thumbs.db

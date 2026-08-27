@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Bloque 3 - Bag of aminoacidos" description="Clasificacion de localizacion subcelular usando composicion de aminoacidos + features fisicoquimicos. Cargar features_composicion_fisicoquimicos.csv en el widget File (marcar accession y sequence como meta en el editor de dominio). Compara Logistic Regression, Random Forest y SVM con Test and Score, e inspecciona errores con Confusion Matrix.">
+	<nodes>
+		<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="File" position="(60.0, 260.0)" />
+		<node id="1" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(60.0, 420.0)" />
+		<node id="2" name="Logistic Regression" qualified_name="Orange.widgets.model.owlogisticregression.OWLogisticRegression" project_name="Orange3" version="" title="Logistic Regression" position="(340.0, 80.0)" />
+		<node id="3" name="Random Forest" qualified_name="Orange.widgets.model.owrandomforest.OWRandomForest" project_name="Orange3" version="" title="Random Forest" position="(340.0, 260.0)" />
+		<node id="4" name="SVM" qualified_name="Orange.widgets.model.owsvm.OWSVM" project_name="Orange3" version="" title="SVM" position="(340.0, 440.0)" />
+		<node id="5" name="Test and Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" version="" title="Test and Score" position="(620.0, 260.0)" />
+		<node id="6" name="Confusion Matrix" qualified_name="Orange.widgets.evaluate.owconfusionmatrix.OWConfusionMatrix" project_name="Orange3" version="" title="Confusion Matrix" position="(900.0, 260.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="1" source_node_id="0" sink_node_id="5" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="3" source_node_id="3" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="4" source_node_id="4" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="5" source_node_id="5" sink_node_id="6" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(60.0, 20.0, 480.0, 130.0)" font-family="Helvetica" font-size="14">1) Doble click en el widget File y cargar features_composicion_fisicoquimicos.csv (accession, sequence, length, 20 aminoacidos + 10 fisicoquimicos + localization). Verificar que la columna 'localization' quede marcada como target (columna clase) en el editor de dominio.
+2) Conectar y correr. En Test and Score, elegir validacion cruzada (ej. 5-fold) y comparar CA (accuracy) y F1 entre los tres modelos.
+3) Confusion Matrix muestra los errores del mejor modelo (doble click para explorar).</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
