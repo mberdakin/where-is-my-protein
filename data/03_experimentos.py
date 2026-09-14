@@ -19,6 +19,10 @@ Los TRES experimentos que se usan en clase:
   3. Ablación de señales: qué familia hace el trabajo pesado (péptido señal,
      NLS, TMD alfa-hélice, TMD beta).
 
+El Random Forest va regularizado (min_samples_leaf=10, max_depth=8,
+min_samples_split=10, max_leaf_nodes=16): sin límites memorizaba el train
+(F1=1.000) y la brecha train-test era ~0.21-0.28.
+
 El pool se cachea en este directorio (data/*.csv está gitignoreado).
 
 Uso:
@@ -79,10 +83,16 @@ CLASES3 = {
     "Membrane": "KW-0472",
 }
 
+# Random Forest regularizado: al limitar profundidad/hojas y exigir un mínimo de
+# muestras por hoja se reduce mucho el overfitting (antes memorizaba el train).
+RF_PARAMS = dict(n_estimators=300, random_state=SEED, n_jobs=1,
+                 min_samples_leaf=10, max_depth=8, min_samples_split=10,
+                 max_leaf_nodes=16)
+
 MODELOS = {
     "LogReg": make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000)),
     "SVM": make_pipeline(StandardScaler(), SVC(cache_size=1000)),
-    "RandomForest": RandomForestClassifier(300, random_state=SEED, n_jobs=1),
+    "RandomForest": RandomForestClassifier(**RF_PARAMS),
 }
 
 
@@ -230,7 +240,7 @@ def exp_overfitting(train, test):
     }
     modelos = {
         "LogReg": make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000)),
-        "RandomForest": RandomForestClassifier(300, random_state=SEED, n_jobs=1),
+        "RandomForest": RandomForestClassifier(**RF_PARAMS),
     }
     filas = []
     for n in TAMANOS_POR_CLASE:

@@ -31,7 +31,9 @@ que el entrenamiento nunca ve**:
 
 Los tres experimentos que se usan en clase (el resto se recortó para que entren en 4 h):
 
-1. **Overfitting:** F1 en train (resustitución) vs F1 en test; la brecha es el overfitting.
+1. **Overfitting:** F1 en train (resustitución) vs F1 en test; la brecha es el overfitting. El
+   Random Forest va regularizado (`min_samples_leaf=10`, `max_depth=8`, `min_samples_split=10`,
+   `max_leaf_nodes=16`): sin límites memorizaba el train (F1 1.000) y la brecha era ~0.21-0.28.
 2. **Curse of dimensionality:** con n fija se agregan features; F1_train sube, F1_test se estanca.
 3. **Ablación de señales:** ¿qué familia hace el trabajo pesado? Péptido señal, NLS, TMD
    alfa-hélice y TMD beta, una por vez.

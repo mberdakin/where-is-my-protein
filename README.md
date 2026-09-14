@@ -142,21 +142,28 @@ overfitting, curse of dimensionality y ablación de señales. Datos crudos:
 
 ### Overfitting y "curse of dimensionality"
 
-**Overfitting = F1 en el train (resustitución) menos F1 en el test.** Con Logistic Regression:
+**Overfitting = F1 en el train (resustitución) menos F1 en el test.** Con Logistic Regression y
+con un Random Forest **regularizado** (`min_samples_leaf=10`, `max_depth=8`,
+`min_samples_split=10`, `max_leaf_nodes=16`):
 
-| Representación | F1 train (n=250) | F1 test (n=250) | brecha | F1 train (n=3000) | F1 test (n=3000) | brecha |
-|---|---|---|---|---|---|---|
-| Composición (33) | 0.744 | 0.723 | 0.020 | 0.693 | 0.722 | -0.030 |
-| Dipéptidos (413) | **1.000** | 0.656 | **0.344** | 0.825 | 0.710 | 0.115 |
-| Señales (44) | 0.832 | 0.790 | 0.042 | 0.768 | 0.787 | -0.019 |
+| Representación | Modelo | F1 train (n=250) | F1 test (n=250) | brecha | F1 train (n=3000) | F1 test (n=3000) | brecha |
+|---|---|---|---|---|---|---|---|
+| Composición (33) | LogReg | 0.744 | 0.723 | 0.020 | 0.693 | 0.722 | -0.030 |
+| Dipéptidos (413) | LogReg | **1.000** | 0.656 | **0.344** | 0.825 | 0.710 | 0.115 |
+| Señales (44) | LogReg | 0.832 | 0.790 | 0.042 | 0.768 | 0.787 | -0.019 |
+| Composición (33) | RF regularizado | 0.825 | 0.703 | 0.121 | 0.721 | 0.725 | -0.004 |
+| Dipéptidos (413) | RF regularizado | 0.928 | 0.711 | 0.217 | 0.742 | 0.710 | 0.032 |
+| Señales (44) | RF regularizado | 0.840 | 0.749 | 0.091 | 0.773 | 0.767 | 0.006 |
 
 ![Overfitting](img/overfitting.png)
 
-- Los dipéptidos **memorizan** el train a n=250 (F1 1.000) y caen a 0.656 en test: overfitting
-  clásico. Más datos reducen la brecha (0.344 → 0.115 a n=3000).
-- Composición y señales casi no overfitean (brecha ≈ 0): pocas features informativas.
-- Con Random Forest (figura, panel derecho) el F1 de train es ~1.000 siempre, y también se ve la
-  brecha.
+- Los dipéptidos **memorizan** el train a n=250 (LogReg F1 1.000) y caen a 0.656 en test:
+  overfitting clásico. Más datos reducen la brecha (0.344 → 0.115 a n=3000).
+- **Regularizar el Random Forest funciona:** sin límites memorizaba (train = 1.000, brecha
+  ~0.21-0.28); con estos parámetros la brecha baja a 0.09-0.22 (n=250) y ~0.01 (n=3000).
+- Es el mismo tradeoff sesgo-varianza: se recorta el train y se pierden 1-3 puntos de test
+  (p. ej. señales 0.794 → 0.767 a n=3000). No aparece un modelo mejor, sino uno más honesto.
+- Composición y señales con LogReg casi no overfitean (brecha ≈ 0): pocas features informativas.
 
 **La curse of dimensionality** se ve fijando pocas muestras y agregando features: el F1 de train
 sube hacia 1 mientras el de test se estanca. Con n=250 y cada vez más dipéptidos (ordenados por
@@ -181,21 +188,21 @@ train=3000, test reservado):
 
 | Variante (+ C+F) | Features extra | 3 clases | Membrana vs resto | Núcleo vs Citoplasma |
 |---|---|---|---|---|
-| baseline | 0 | 0.749 | 0.832 | 0.788 |
-| péptido señal | 3 | 0.757 | 0.844 | 0.796 |
-| NLS | 5 | 0.779 | 0.846 | 0.808 |
-| **TMD alfa-hélice** | 2 | **0.787** | **0.900** | 0.800 |
-| TMD beta | 1 | 0.739 | 0.826 | 0.788 |
+| baseline | 0 | 0.741 | 0.820 | 0.788 |
+| péptido señal | 3 | 0.757 | 0.838 | 0.788 |
+| NLS | 5 | 0.779 | 0.814 | 0.808 |
+| **TMD alfa-hélice** | 2 | **0.787** | **0.900** | 0.796 |
+| TMD beta | 1 | 0.733 | 0.826 | 0.776 |
 | todas | 11 | **0.816** | **0.906** | **0.816** |
 
 ![Ablación de señales](img/ablacion_senales.png)
 
-- **TMD alfa-hélice hace el trabajo pesado** para separar Membrana (0.832 → 0.900) y es la
-  familia que más sube el desempeño global (con sólo 2 features, +0.038).
+- **TMD alfa-hélice hace el trabajo pesado** para separar Membrana (0.820 → 0.900) y es la
+  familia que más sube el desempeño global (con sólo 2 features, +0.046).
 - **NLS** es la única que mueve la aguja en el par más difícil, Núcleo vs Citoplasma
   (0.788 → 0.808), y también aporta al global.
 - **Péptido señal** ayuda a Membrana, pero menos que el TMD.
-- **TMD beta no aporta nada** (0.739, igual o peor que el baseline): los beta-barriles son raros
+- **TMD beta no aporta nada** (0.733, igual o peor que el baseline): los beta-barriles son raros
   en humano y la heurística no los captura.
 - Las tres familias juntas superan a cualquiera sola (0.816): son complementarias.
 
