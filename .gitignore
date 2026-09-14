@@ -1,5 +1,6 @@
-# Datos generados por el script (regenerables, no se versionan)
+# Datos generados por los scripts (regenerables, no se versionan)
 data/*.csv
+data/*.npz
 
 # Python
 __pycache__/
