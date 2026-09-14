@@ -1,0 +1,9 @@
+# Dependencias opcionales para los embeddings de ESM-2 (data/04_esm2_embeddings.py
+# y notebooks/esm2_embeddings_colab.ipynb).
+#
+# En Google Colab, torch ya viene instalado: alcanza con `pip install transformers`.
+# Localmente, instalar primero el torch de CPU:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements-esm2.txt
+
+transformers
