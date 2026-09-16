@@ -10,6 +10,9 @@ __pycache__/
 # Orange
 *.ows.bak
 
+# Office (archivos temporales de bloqueo)
+~$*.docx
+
 # SO
 .DS_Store
 Thumbs.db

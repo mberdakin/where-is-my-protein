@@ -143,26 +143,27 @@ overfitting, curse of dimensionality y ablación de señales. Datos crudos:
 ### Overfitting y "curse of dimensionality"
 
 **Overfitting = F1 en el train (resustitución) menos F1 en el test.** Con Logistic Regression y
-con un Random Forest **regularizado** (`min_samples_leaf=10`, `max_depth=8`,
-`min_samples_split=10`, `max_leaf_nodes=16`):
+un Random Forest (`min_samples_leaf=10`, `max_depth=8`, `min_samples_split=10`,
+`max_leaf_nodes=16`):
 
 | Representación | Modelo | F1 train (n=250) | F1 test (n=250) | brecha | F1 train (n=3000) | F1 test (n=3000) | brecha |
 |---|---|---|---|---|---|---|---|
 | Composición (33) | LogReg | 0.744 | 0.723 | 0.020 | 0.693 | 0.722 | -0.030 |
 | Dipéptidos (413) | LogReg | **1.000** | 0.656 | **0.344** | 0.825 | 0.710 | 0.115 |
 | Señales (44) | LogReg | 0.832 | 0.790 | 0.042 | 0.768 | 0.787 | -0.019 |
-| Composición (33) | RF regularizado | 0.825 | 0.703 | 0.121 | 0.721 | 0.725 | -0.004 |
-| Dipéptidos (413) | RF regularizado | 0.928 | 0.711 | 0.217 | 0.742 | 0.710 | 0.032 |
-| Señales (44) | RF regularizado | 0.840 | 0.749 | 0.091 | 0.773 | 0.767 | 0.006 |
+| Composición (33) | Random Forest | 0.825 | 0.703 | 0.121 | 0.721 | 0.725 | -0.004 |
+| Dipéptidos (413) | Random Forest | 0.928 | 0.711 | 0.217 | 0.742 | 0.710 | 0.032 |
+| Señales (44) | Random Forest | 0.840 | 0.749 | 0.091 | 0.773 | 0.767 | 0.006 |
 
 ![Overfitting](img/overfitting.png)
 
 - Los dipéptidos **memorizan** el train a n=250 (LogReg F1 1.000) y caen a 0.656 en test:
   overfitting clásico. Más datos reducen la brecha (0.344 → 0.115 a n=3000).
-- **Regularizar el Random Forest funciona:** sin límites memorizaba (train = 1.000, brecha
-  ~0.21-0.28); con estos parámetros la brecha baja a 0.09-0.22 (n=250) y ~0.01 (n=3000).
-- Es el mismo tradeoff sesgo-varianza: se recorta el train y se pierden 1-3 puntos de test
-  (p. ej. señales 0.794 → 0.767 a n=3000). No aparece un modelo mejor, sino uno más honesto.
+- **Usamos un Random Forest con límites** (`min_samples_leaf=10`, `max_depth=8`,
+  `min_samples_split=10`, `max_leaf_nodes=16`) para **reducir** el overfitting.
+- Aun así el overfitting no desaparece: la brecha train-test sigue siendo mayor cuando hay pocas
+  muestras y con representaciones complejas (dipéptidos, 413 features) que con composición o
+  señales.
 - Composición y señales con LogReg casi no overfitean (brecha ≈ 0): pocas features informativas.
 
 **La curse of dimensionality** se ve fijando pocas muestras y agregando features: el F1 de train
