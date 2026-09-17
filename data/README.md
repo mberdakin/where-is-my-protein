@@ -1,5 +1,24 @@
 # data/
 
+## `05_dataset_grande.py`
+
+**Paso de preparación** (no se versiona la salida). Genera el dataset ampliado que usa
+`notebooks/overfitting.ipynb`. Toma el pool de `03_experimentos.py` (proteínas humanas revisadas
+con evidencia experimental, largo 50-500, keywords mutuamente excluyentes) y exporta solo las
+columnas de composición + fisicoquímicos + señales, con los datos de identificación y la clase:
+
+- `data_share/features_grande_composicion_senales.csv` — 5.820 proteínas (Membrane 3196,
+  Nucleus 1499, Cytoplasm 1125). Es un archivo generado (5,5 MB), por eso no está en el repo:
+  cada uno lo genera una vez.
+
+```bash
+python 05_dataset_grande.py
+```
+
+Requiere haber corrido `03_experimentos.py` antes (o construye el pool la primera vez,
+descargando de UniProt). Después, copiar `data_share/features_grande_composicion_senales.csv`
+junto al notebook `overfitting.ipynb`.
+
 ## `02_comparar_representaciones.py`
 
 Validación interna (scikit-learn) que compara, con las **mismas particiones** y los mismos

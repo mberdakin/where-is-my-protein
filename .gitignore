@@ -1,6 +1,7 @@
 # Datos generados por los scripts (regenerables, no se versionan)
 data/*.csv
 data/*.npz
+data_share/features_grande_composicion_senales.csv
 
 # Python
 __pycache__/
@@ -12,6 +13,7 @@ __pycache__/
 
 # Office (archivos temporales de bloqueo)
 ~$*.docx
+.~lock.*
 
 # SO
 .DS_Store
