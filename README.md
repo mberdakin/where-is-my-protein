@@ -258,10 +258,12 @@ where-is-my-protein/
 │   ├── 02_comparar_representaciones.py  # comparación head-to-head (validación interna)
 │   ├── 03_experimentos.py        # overfitting, curse of dimensionality y ablación (test reservado)
 │   ├── 04_esm2_embeddings.py     # embeddings ESM-2 (CPU/Colab) como representación alternativa
+│   ├── 05_dataset_grande.py      # exporta el dataset ampliado (5.820 proteínas) para overfitting.ipynb
 │   └── README.md
 ├── notebooks/
 │   ├── exploracion_alumnos.ipynb            # con prompts sugeridos para IA, sin resolver
 │   ├── exploracion_docentes_completa.ipynb  # resuelto, con gráficos de referencia
+│   ├── overfitting.ipynb                    # CART/RF/red neuronal: F1 train vs test según tamaño de train
 │   └── esm2_embeddings_colab.ipynb          # ESM-2 en CPU / Colab, listo para correr
 ├── orange/
 │   ├── bag_of_aminoacidos.ows              # File → LR/RF/SVM → Test and Score → Confusion Matrix
@@ -271,6 +273,7 @@ where-is-my-protein/
 │   ├── features_composicion_fisicoquimicos.csv
 │   ├── features_dipeptidos_fisicoquimicos.csv
 │   └── features_composicion_senales_fisicoquimicos.csv
+│   # features_grande_composicion_senales.csv se genera (no se versiona): ver data/05_dataset_grande.py
 ├── docs/
 │   ├── guia_alumnos.docx         # agenda, instrucciones paso a paso, preguntas de informe
 │   └── guia_docentes.docx        # + setup técnico, resultados esperados, troubleshooting
@@ -284,13 +287,16 @@ where-is-my-protein/
 1. `pip install -r requirements.txt`
 2. Correr `data/01_construir_dataset.py` (requiere conexión a internet) para generar los tres CSV.
    Opcional: correr `data/02_comparar_representaciones.py` para reproducir la tabla de resultados.
-3. Abrir `notebooks/exploracion_docentes_completa.ipynb` y correr **Kernel → Restart & Run
+3. Correr `data/05_dataset_grande.py` una vez para generar el dataset ampliado que usa
+   `notebooks/overfitting.ipynb` (no se versiona; ver `data/README.md`). Copiar
+   `data_share/features_grande_composicion_senales.csv` junto al notebook.
+4. Abrir `notebooks/exploracion_docentes_completa.ipynb` y correr **Kernel → Restart & Run
    All** para reemplazar los gráficos de prueba por los reales.
-4. Instalar [Orange Data Mining](https://orangedatamining.com/download/) (gratuito) y abrir
+5. Instalar [Orange Data Mining](https://orangedatamining.com/download/) (gratuito) y abrir
    los workflows de `orange/` para confirmar que cargan bien.
-5. Repartir a los estudiantes: los 3 CSV, `notebooks/exploracion_alumnos.ipynb`, los `.ows`,
-   y `docs/guia_alumnos.docx`.
-6. Extensión ESM-2 (opcional, para grupos avanzados): abrir
+6. Repartir a los estudiantes: los 3 CSV, `notebooks/exploracion_alumnos.ipynb`,
+   `notebooks/overfitting.ipynb` (+ su CSV generado), los `.ows`, y `docs/guia_alumnos.docx`.
+7. Extensión ESM-2 (opcional, para grupos avanzados): abrir
    `notebooks/esm2_embeddings_colab.ipynb` en Google Colab (CPU), subir el CSV de señales y
    correr. Requiere `pip install transformers` (el notebook lo hace).
 
